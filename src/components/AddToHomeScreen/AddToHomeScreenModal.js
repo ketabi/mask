@@ -11,9 +11,27 @@ import { isAndroid, isMobile, isIOS, isIPad13 } from 'react-device-detect';
 
 export default function AddToHomeScreenModal() {
   const intl = useIntl();
-  const [modalShow, setModalShow] = useState(true);
+
+  const [modalShow, setModalShow] = useState(() => {
+    const ONE_DAY = 24 * 60 * 60 * 1000;
+    const lastShowedAddToHomeScreenModal = JSON.parse(
+      localStorage.getItem('lastShowedAddToHomeScreenModal')
+    );
+    if (lastShowedAddToHomeScreenModal) {
+      return (
+        Date.now() - lastShowedAddToHomeScreenModal >
+        ONE_DAY * process.env.REACT_APP_ADD_TO_HOME_SCREEN_MODAL_AFTER_DAYS
+      );
+    } else {
+      return true;
+    }
+  });
 
   const handleOnCloseButtonClick = () => {
+    localStorage.setItem(
+      'lastShowedAddToHomeScreenModal',
+      JSON.stringify(Date.now())
+    );
     setModalShow(false);
   };
 
